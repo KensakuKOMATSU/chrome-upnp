@@ -1,0 +1,14 @@
+{
+  "name": "UPnP M-Search extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "popup UPnP M-Search result in your local network. This extension is utilizing Chrome's raw socket api :)",
+  "browser_action": {
+    "default_icon": "/images/icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "experimental",
+    "socket"
+  ]
+}
