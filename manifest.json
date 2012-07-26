@@ -4,7 +4,7 @@
   "manifest_version": 2,
   "description": "popup UPnP M-Search result in your local network. This extension is utilizing Chrome's raw socket api :)",
   "browser_action": {
-    "default_icon": "/images/icon.png",
+    "default_icon": "/images/television_icon.png",
     "default_popup": "popup.html"
   },
   "permissions": [

@@ -72,18 +72,21 @@ var UPnP;
     }
 
     var buffer = t2ab(M_SEARCH_REQUEST);
+    var closure_ = function(e){
+      if(e.bytesWritten < 0) {
+        throw("an Error occured while sending M-SEARCH : "+e.bytesWritten);
+      }
+      console.log("=== SENT UPnP M-SEARCH ===");
+      console.log(e);
+
+      if(typeof(callback) === "function")
+        callback();
+    }
 
     // send M-SEARCH twice times
     for(var i = 0; i < 2; i++) {
       chrome.experimental.socket.sendTo(this.sid, buffer, this.MIP_, this.PORT_, function(e) {
-        if(e.bytesWritten < 0) {
-          throw("an Error occured while sending M-SEARCH : "+e.bytesWritten);
-        }
-        console.log("=== SENT UPnP M-SEARCH ===");
-        console.log(e);
-
-        if(typeof(callback) === "function")
-          callback();
+        closure_(e);
       });
     }
   }
@@ -95,7 +98,7 @@ var UPnP;
     }
 
     var self = this;
-    chrome.experimental.socket.recvFrom(this.sid, null, function(recv) {
+    var closure_ = function(recv){
       console.log("=== RECV UPnP packet from "+recv.address+"===");
       console.log(recv);
       recv.data = ab2t(recv.data);
@@ -103,6 +106,10 @@ var UPnP;
         callback(recv);
       }
       self.listen(callback);
+    }
+
+    chrome.experimental.socket.recvFrom(this.sid, function(recv) {
+      closure_(recv);
     });
   }
 }());
