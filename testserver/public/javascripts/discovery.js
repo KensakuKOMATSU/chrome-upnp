@@ -1,36 +1,45 @@
 (function(){
-	var ID = "___discovery___";
-	var callback_;
+  var ID = "___discovery___";
+  var callback_;
 
-	var div = document.createElement('div');
-	div.setAttribute("id", ID);
-	div.style.width = "1px";
-	div.style.height = "1px";
-	div.style.overflow = "hidden";
-	document.querySelector('body').appendChild(div);
+  var div = document.createElement('div');
+  div.setAttribute("id", ID);
+  div.style.width = "1px";
+  div.style.height = "1px";
+  div.style.overflow = "hidden";
+  document.querySelector('body').appendChild(div);
 
-	div.addEventListener("myDiscoveryResult", function(e){
-		var res = JSON.parse(this.innerText);
+  div.addEventListener("myDiscoveryResult", function(e){
+    var res = JSON.parse(this.innerText);
 
-		console.log(res);
-		if(typeof(callback_) === "function") {
-			callback_(res);
-		}
-	}, false);
+    console.log(res);
+
+    var obj = {
+      res_: res,
+      services_: res.res,
+      getServices: function(){
+        return this.services_;
+      }
+    }
+
+    if(typeof(callback_) === "function") {
+      callback_(obj);
+    }
+  }, false);
 
 
-	var customEvent = document.createEvent('Event');
-	customEvent.initEvent('myDiscoveryEvent', true, true);
+  var customEvent = document.createEvent('Event');
+  customEvent.initEvent('myDiscoveryEvent', true, true);
 
-	function fireCustomEvent(data) {
-	  var hiddenDiv = document.getElementById(ID);
-	  hiddenDiv.dispatchEvent(customEvent);
-	}
+  function fireCustomEvent(data) {
+    var hiddenDiv = document.getElementById(ID);
+    hiddenDiv.dispatchEvent(customEvent);
+  }
 
-	navigator.getNetworkServices = function(type, callback) {
-		fireCustomEvent(type);
-		callback_ = callback;
-	}
+  navigator.getNetworkServices = function(type, callback) {
+    fireCustomEvent(type);
+    callback_ = callback;
+  }
 }());
 
 

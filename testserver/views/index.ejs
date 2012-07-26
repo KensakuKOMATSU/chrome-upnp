@@ -19,7 +19,9 @@ document.querySelector("button").onclick = function(){
   navigator.getNetworkServices('urn:....', show)
 }
 
-function show(res) {
-  output.innerText = JSON.stringify(res, null, 2);
+function show(lists) {
+  console.log(lists);
+  var services = lists.getServices();
+  output.innerText = JSON.stringify(services, null, 2);
 }
 </script>
