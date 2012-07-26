@@ -114,4 +114,9 @@ console.log("upnp");
       closure_(recv);
     });
   }
+  // destroy socket
+  UPnP.prototype.destroy = function() {
+    chrome.experimental.socket.destroy(this.sid);
+    this.sid = null;
+  }
 }());

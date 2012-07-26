@@ -1,2 +1,25 @@
 <h1><%= title %></h1>
 <p>Welcome to <%= title %></p>
+
+<button>start</button>
+
+<hr>
+<b>discovered result:</b>
+<br><output><pre></pre></output>
+
+
+<script src="/javascripts/script.js"></script>
+
+<script>
+var output = document.querySelector("pre");
+
+document.querySelector("button").onclick = function(){
+	console.log("start");
+	output.innerText = "探索中・・・";
+	navigator.getNetworkServices('urn:....', show)
+}
+
+function show(res) {
+	output.innerText = JSON.stringify(res, null, 2);
+}
+</script>
