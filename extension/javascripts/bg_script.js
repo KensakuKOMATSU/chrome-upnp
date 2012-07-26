@@ -2,8 +2,8 @@ var TIMEOUT = 3500;
 
 // when receive message from content_script.
 chrome.extension.onMessage.addListener(function(req, sender, sendResponse){
-	// do M-SEARCH
-	doSearch();
+  // do M-SEARCH
+  doSearch();
 
 });
 
@@ -29,27 +29,31 @@ var parse = function(data) {
  *
  */
 function doSearch(){
-	var upnp = new UPnP();
-	var res_ = [];
+  var upnp = new UPnP();
+  var res_ = [];
+  var usns_ = {};
 
-	setTimeout(function(){
-		upnp.listen(function(res){
-			var d = parse(res.data);
-			res_.push({name: d.server, url: d.location, type: d.st, config: ""});
-		});
-		upnp.search();
-	}, 100);
+  setTimeout(function(){
+    upnp.listen(function(res){
+      var d = parse(res.data);
+      if(!!usns_.hasOwnProperty(d.url) === false) {
+        res_.push({name: d.server, url: d.location, type: d.st, config: ""});
+        usns_[d.url] = true;
+      }
+    });
+    upnp.search();
+  }, 100);
 
-	// after timeout, send searched result.
-	setTimeout(function(){
-		// obtain current tab
-		chrome.tabs.getSelected(null, function(tab){
-			// send searched result to current tab.
-			chrome.tabs.sendMessage(tab.id, {res: res_});
-		});
-		upnp.destroy();
+  // after timeout, send searched result.
+  setTimeout(function(){
+    // obtain current tab
+    chrome.tabs.getSelected(null, function(tab){
+      // send searched result to current tab.
+      chrome.tabs.sendMessage(tab.id, {res: res_});
+    });
+    upnp.destroy();
 
-		// clear searched result.
-		setTimeout(function(){res_.length = 0;}, 1);
-	}, TIMEOUT);
+    // clear searched result.
+    setTimeout(function(){res_.length = 0;}, 1);
+  }, TIMEOUT);
 }
