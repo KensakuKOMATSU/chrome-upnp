@@ -1,11 +1,58 @@
+<section>
 <h1><%= title %></h1>
 <p>Welcome to <%= title %></p>
+</section>
 
-<button>start</button>
+<section class="well">
+<p>
+<button class="btn btn-primary"><i class='icon-home icon-white'></i> start M-SEARCH</button>
+</p>
+
+<b>discovered services:</b>
+<br><output><pre>
+<span class="gray">
+Push button above, then you'll find UPnP devices in your local network here.
+</span>
+</pre></output>
+</section>
 
 <hr>
-<b>discovered services:</b>
-<br><output><pre></pre></output>
+<section>
+<span class="label label-info">What's this?</span>
+<p class="well">
+In this site, discover UPnP devices in your local network and display their properties (via UPnP M-SEARCH). For this purpose, I emulate <a href="http://people.opera.com/richt/release/specs/discovery/Overview.html">service discovery api</a> that is under discussion in W3C's Device APIs WG.<br>
+To enable IP multicast capability and utilize from browser, making use of <a href="http://code.google.com/chrome/extensions/trunk/experimental.socket.html">chrome extension's raw socket api</a> (please note that this feature is experimental now).
+</p>
+</section>
+
+
+<hr>
+<section>
+<span class="label label-info">Links</span>
+<p>
+<ul>
+  <li><a href="http://people.opera.com/richt/release/specs/discovery/Overview.html">Opera and CableLab's proposal (Networked Service Discovery and Messaging)</a></li>
+  <li><a href="http://w3c-test.org/dap/wi-addendum-local-services/">SONY Mobile's proposal (Web Intents Addendum - Local Services)</a></li>
+  <li><a href="https://github.com/KensakuKOMATSU/chrome-upnp">repositry (github)</a></li>
+</ul>
+</p>
+</section>
+
+
+<hr>
+<section>
+<span class="label label-important">Important</span>
+<p>
+This demonstration site needs <a href="extension.crx">Chrome's experimental extension</a>. So, you'll need <a href="https://tools.google.com/dlpage/chromesxs">Google Chrome Canary</a>, or if you're using Linux, <a href="http://www.chromium.org/getting-involved/dev-channel/">Google Chrome Dev Channel</a> to use the extension.
+</p>
+<ol>
+<li>Navigate to <code>chrome://flags/</code> in Canary, and enable "Experimental Extension APIs"</li>
+<li>Navigate to <code>chrome://chrome/extensions/</code> and enable Developer Mode.</li>
+<li><a href="extension.crx">Download the packed extension</a></li>
+<li>Drag and drop the file into <code>chrome://chrome/extensions</code> and follow the prompts to install(if needed)</li>
+</ol>
+</div>
+</section>
 
 
 <script src="/javascripts/discovery.js"></script>
@@ -15,7 +62,7 @@ var output = document.querySelector("pre");
 
 document.querySelector("button").onclick = function(){
   console.log("start");
-  output.innerText = "探索中・・・";
+  output.innerText = "Searching...";
   navigator.getNetworkServices('urn:....', show)
 }
 
@@ -25,3 +72,4 @@ function show(lists) {
   output.innerText = JSON.stringify(services, null, 2);
 }
 </script>
+
