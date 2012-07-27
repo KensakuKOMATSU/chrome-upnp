@@ -21,5 +21,5 @@ Please note that this library is quite experimental, you shouldn't use it in pro
 
 License
 ----------
-Copyright &copy; 2012 Kensaku Komatsu ([@komasshu](http://twitter.com/komasshu)
+Copyright &copy; 2012 Kensaku Komatsu ([@komasshu](http://twitter.com/komasshu))
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
