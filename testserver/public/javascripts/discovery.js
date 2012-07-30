@@ -9,9 +9,11 @@
   div.style.overflow = "hidden";
   document.querySelector('body').appendChild(div);
 
-  div.addEventListener("myDiscoveryResult", function(e){
+  // from content_script to frontend
+  div.addEventListener("getNetworkServicesResult", function(e){
     var res = JSON.parse(this.innerText);
 
+    // [TODO] remove overlapped result.
     console.log(res);
 
     var obj = {
@@ -28,19 +30,21 @@
   }, false);
 
 
-  var customEvent = document.createEvent('Event');
-  customEvent.initEvent('myDiscoveryEvent', true, true);
 
-  function fireCustomEvent(data) {
-    var hiddenDiv = document.getElementById(ID);
-    hiddenDiv.dispatchEvent(customEvent);
+  // from frontend to content_script
+  function fireGetNetworkServicesEvent(data) {
+    var ev = document.createEvent('Event')
+      , hiddenDiv = document.getElementById(ID);
+    ev.initEvent('getNetworkServices', true, true);
+
+    hiddenDiv.innerText = JSON.stringify(data);
+    hiddenDiv.dispatchEvent(ev);
   }
 
   navigator.getNetworkServices = function(type, callback) {
-    fireCustomEvent(type);
+    console.log(type);
+
+    fireGetNetworkServicesEvent({"type":type});
     callback_ = callback;
   }
 }());
-
-
-

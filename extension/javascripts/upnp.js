@@ -43,7 +43,7 @@ console.log("upnp");
     "MX: 3\r\n" +
     "HOST: 239.255.255.250:1900\r\n" +
     "MAN: \"ssdp:discover\"\r\n" +
-    "ST: upnp:rootdevice\r\n\r\n"
+    "ST: {{st}}\r\n\r\n"
 
   // UPnP classes
   UPnP = function(){
@@ -68,12 +68,14 @@ console.log("upnp");
   }
 
   // do M-SEARCH
-  UPnP.prototype.search = function(callback /* function */) {
+  UPnP.prototype.search = function(st /* search type */, callback /* function */) {
     if(!!this.sid === false) {
       throw('socket id is not allocated');
     }
 
-    var buffer = t2ab(M_SEARCH_REQUEST);
+    var ssdp = M_SEARCH_REQUEST.replace("{{st}}", st);
+    console.log(ssdp);
+    var buffer = t2ab(ssdp);
     var closure_ = function(e){
       if(e.bytesWritten < 0) {
         throw("an Error occured while sending M-SEARCH : "+e.bytesWritten);

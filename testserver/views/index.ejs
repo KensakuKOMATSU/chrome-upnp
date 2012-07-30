@@ -60,13 +60,14 @@ This demonstration site needs <a href="extension.crx">Chrome's experimental exte
 var output = document.querySelector("pre");
 
 document.querySelector("button").onclick = function(){
-  console.log("start");
   output.innerText = "Searching...";
-  navigator.getNetworkServices('urn:....', show)
+
+  navigator.getNetworkServices('upnp:rootdevice', show)
 }
 
 function show(lists) {
   console.log(lists);
+
   var services = lists.getServices();
   output.innerText = JSON.stringify(services, null, 2);
 }
