@@ -68,10 +68,15 @@ document.querySelector("button").onclick = function(){
 }
 
 function show(lists) {
-  console.log(lists);
-
   var services = lists.getServices();
-  output.innerText = JSON.stringify(services, null, 2);
+
+  for (var i = 0, l = services.length; i < l; i++) {
+    output.innerHTML += "\n["+i+"] <a href='"+services[i].url+"' target='_blank'>"+services[i].url+"</a>";
+  }
+  output.innerHTML += "\n\n";
+
+  output.innerHTML += JSON.stringify(services, null, 2);
+  
 }
 </script>
 

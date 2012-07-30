@@ -42,9 +42,15 @@ function doMSearch(st /* search type */){
   }
 
   setTimeout(function(){
+    var urls = [];
     upnp.listen(function(res){
       var d = parse(res.data);
+      
+      for(var i = 0, l = urls.length; i < l; i++) {
+        if(urls[i] === d.location) return;
+      }
       res_.push({name: d.server, url: d.location, type: d.st, config: ""});
+      urls.push(d.location);
     });
     upnp.search(st);
   }, 100);
