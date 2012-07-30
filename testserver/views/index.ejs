@@ -5,6 +5,7 @@
 
 <section class="well">
 <p>
+<input type="text" id="upnptype" value="upnp:rootdevice"/>
 <button class="btn btn-primary"><i class='icon-home icon-white'></i> start M-SEARCH</button>
 </p>
 
@@ -60,9 +61,10 @@ This demonstration site needs <a href="extension.crx">Chrome's experimental exte
 var output = document.querySelector("pre");
 
 document.querySelector("button").onclick = function(){
-  output.innerText = "Searching...";
+  var type = document.querySelector("#upnptype").value;
+  navigator.getNetworkServices(type, show)
 
-  navigator.getNetworkServices('upnp:rootdevice', show)
+  output.innerText = "Searching...";
 }
 
 function show(lists) {

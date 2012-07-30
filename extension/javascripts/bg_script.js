@@ -32,7 +32,7 @@ function doMSearch(st /* search type */){
     for(var i = 0, l = arr.length; i < l; i++ ) {
       var a = arr[i].split(":");
       var k = a[0].toLowerCase();
-      var v = a.slice(1).join(":").replace("\r", "");
+      var v = a.slice(1).join(":").replace(/^\s+/,"").replace("\r", "");
 
       if(!!v) {
         ret[k] = v;
