@@ -37,5 +37,5 @@ var parse = function(data) {
 var upnp = new UPnP();
 upnp.onready = function(){
   this.listen(show);
-  this.search();
+  this.search("upnp:rootdevice");
 }
