@@ -64,19 +64,21 @@ document.querySelector("button").onclick = function(){
   var type = document.querySelector("#upnptype").value;
   navigator.getNetworkServices(type, show)
 
-  output.innerText = "Searching...";
+  output.innerText = "Running discovery process...";
 }
 
 function show(lists) {
   var services = lists.getServices();
 
+  output.innerHTML = "[Discovered UPnP devices]\n\n";
+
+  output.innerHTML += "- Description.xml\n";
   for (var i = 0, l = services.length; i < l; i++) {
     output.innerHTML += "\n["+i+"] <a href='"+services[i].url+"' target='_blank'>"+services[i].url+"</a>";
   }
   output.innerHTML += "\n\n";
-
+  output.innerHTML += "- NetworkServices\n\n";
   output.innerHTML += JSON.stringify(services, null, 2);
-  
 }
 </script>
 
