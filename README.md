@@ -8,7 +8,9 @@ This project is developing Service Discovery API emulation library. Service Disc
 
 # How to use?
 
-The library (now developing UPnP support only...)  enables "[Networked Service Discovery and Messaging](http://people.opera.com/richt/release/specs/discovery/Overview.html)" proposed by Opera and CableLabs. To enable IP Multicast in current browser, installing chrome extension is required. (The extension is using experimental feature, so you'll need [Google Chrome Canary](https://tools.google.com/dlpage/chromesxs) (in Linux case, [Google Chrome Dev Channel](http://www.chromium.org/getting-involved/dev-channel/)).
+The library (now developing UPnP support only...)  enables "[Networked Service Discovery and Messaging](http://people.opera.com/richt/release/specs/discovery/Overview.html)" proposed by Opera and CableLabs. To enable IP Multicast in current browser, installing chrome extension is required. 
+
+The extension is depends on Raw Socket API (Chrome Extension's API). Because using this api, currently this extension only works under Chromium (I found that [r148782](http://commondatastorage.googleapis.com/chromium-browser-continuous/index.html?path=Mac/148782/) works well). Please note that this api doesn't work current Google Canary channel and Dev channel, I guess this is due to [moving chrome.experimental.socket to chrome.socket](http://code.google.com/p/chromium/issues/detail?id=130379&q=socket+experimental&colspec=ID+Pri+Mstone+ReleaseBlock+OS+Area+Feature+Status+Owner+Summary).
 
 * Navigate to `chrome://flags/` in Canary, and enable 'Experimental Extension APIs'
 * Navigate to `chrome://chrome/extensions/` and enable Developer Mode.
