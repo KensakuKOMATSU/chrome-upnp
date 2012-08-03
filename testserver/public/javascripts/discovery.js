@@ -1,4 +1,6 @@
 (function(){
+  if( navigator.getNetworkServices ) return;
+
   var ID = "___discovery___";
   var callback_;
 

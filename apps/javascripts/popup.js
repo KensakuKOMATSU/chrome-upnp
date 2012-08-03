@@ -15,6 +15,12 @@ var show = function(recv){
   }
   $("output").append("<dt>Plain data</dt><dd><pre style='font-size:0.4em;background:#ccc;'>"+str+"</pre></dd>");
   $("output").append("</dl>");
+
+  $.get(o.location, function(data, e) {
+    console.log(e);
+    console.log(data);
+  });
+
 }
 
 var parse = function(data) {
