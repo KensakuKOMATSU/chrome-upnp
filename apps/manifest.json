@@ -21,6 +21,15 @@
     "16": "/images/icon_16.png",
     "128": "/images/icon_128.png"
   },
+  "intents": {
+    "http://webintents.org/view": [
+    {
+      "type": ["video/mp4"],
+      "href": "/main.html",
+      "title" : "View in Local NW devices",
+      "disposition" : "inline"
+    }
+  ]},
   "permissions": [
     "http://*/",
     "experimental",
