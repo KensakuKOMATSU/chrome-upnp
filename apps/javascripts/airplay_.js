@@ -1,9 +1,11 @@
 
 window.intent = window.intent || window.webkitIntent;
 
-var videourl = window.intent.data;
+var videourl = ( window.intent && window.intent.data ) || "";
 
-$("#videourl").text(videourl);
+$("#videourl").val(videourl).bind("input", function(e) {
+  videourl = $(this).val();
+});
 
 var list=[]
 

@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<script src="/javascripts/jquery-1.7.2.min.js"></script>
+</head>
+<body>
+<table>
+  <tr>
+<td>
+  <a alt="bunny(webintents)" href="videos/bunny.mp4" class="wi">
+<img src="images/bunny120.png">
+</a>
+</td>
+<td>
+  <ul>
+    <li><a href="videos/bunny.mp4">bunny (view in this site)</a></li>
+    <li><a href="videos/bunny.mp4" class="wi">bunny(webintents)</a></li>
+  </ul>
+</td>
+</tr>
+</table>
+<script>
+ if(window.WebKitIntent || window.Intent) {
+  window.Intent = window.Intent || window.WebKitIntent;
+  window.navigator.startActivity = window.navigator.startActivity || window.navigator.webkitStartActivity;
+  window.intent = window.intent || window.webkitIntent;
+
+	$("a.wi").bind("click", function(e){
+		e.preventDefault();
+		var url = location.origin+"/"+$(this).attr("href");
+		var intent = new Intent("http://webintents.org/view", "video/mp4", url);
+    window.navigator.startActivity(intent, null, null);
+ });
+}
+</script>
+</body>
+</html>
