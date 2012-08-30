@@ -4,21 +4,36 @@
 <script src="/javascripts/jquery-1.7.2.min.js"></script>
 </head>
 <body>
-<table>
-  <tr>
-<td>
-  <a alt="bunny(webintents)" href="videos/bunny.mp4" class="wi">
-<img src="images/bunny120.png">
-</a>
-</td>
-<td>
-  <ul>
-    <li><a href="videos/bunny.mp4">bunny (view in this site)</a></li>
-    <li><a href="videos/bunny.mp4" class="wi">bunny(webintents)</a></li>
-  </ul>
-</td>
-</tr>
-</table>
+  <header>
+    <h1>Web Intents test</h1>
+  </header>
+  <section>
+    <h2>webintents.org/view</h2>
+    <table>
+      <tr>
+    <td>
+      <a alt="bunny(webintents)" href="videos/bunny.mp4" class="wi">
+    <img src="images/bunny120.png">
+    </a>
+    </td>
+    <td>
+      <ul>
+        <li><a href="videos/bunny.mp4">bunny (view in this site)</a></li>
+        <li><a href="videos/bunny.mp4" class="wi">bunny(webintents)</a></li>
+      </ul>
+    </td>
+    </tr>
+    </table>
+  </section>
+  <section>
+    <h2>webintents.org/edit</h2>
+    <p>
+      <button class="wi-edit">Invoke edit intent!!</button>
+    </p>
+  </section>
+
+
+
 <script>
  if(window.WebKitIntent || window.Intent) {
   window.Intent = window.Intent || window.WebKitIntent;
@@ -30,7 +45,11 @@
 		var url = location.origin+"/"+$(this).attr("href");
 		var intent = new Intent("http://webintents.org/view", "video/mp4", url);
     window.navigator.startActivity(intent, null, null);
- });
+  });
+  $("button.wi-edit").bind("click", function(e){
+    var intent = new Intent("http://webintents.org/edit", "image/*", null);
+    window.navigator.startActivity(intent, function(e){ console.log(e); }, null);
+  });
 }
 </script>
 </body>

@@ -1,20 +1,12 @@
 {
-  "name": "UPnP M-Search app",
-  "version": "0.1",
   "manifest_version": 2,
+  "name": "UPnP M-Search app",
   "description": "show UPnP M-Search result in your local network. This web app is utilizing Chrome's raw socket api :)",
-  "background": {
-    "scripts": ["/javascripts/upnp.js", "/javascripts/bg_script.js"]
-  },
-  "content_scripts": [
-    {
-      "matches":["http://*/*", "https://*/*"],
-      "js":["/javascripts/content_script.js"]
-    }
-  ],
+  "version": "0.1",
+  "minimum_chrome_version": "23",
   "app": {
-    "launch": {
-      "local_path": "main.html"
+    "background": {
+      "scripts": ["main.js"]
     }
   },
   "icons": {
@@ -25,15 +17,15 @@
     "http://webintents.org/view": [
     {
       "type": ["video/mp4"],
-      "href": "/main.html",
-      "title" : "View in Local NW devices",
-      "disposition" : "inline"
+      "title" : "View in Local NW devices"
     }
   ]},
   "permissions": [
     "http://*/",
     "experimental",
-    "socket",
-    "tabs"
+    {"socket": [
+      "udp-bind",
+      "udp-send-to"
+    ]}
   ]
 }
