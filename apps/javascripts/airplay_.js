@@ -9,6 +9,11 @@ $("#videourl").val(videourl).bind("input", function(e) {
 
 var list=[]
 
+var ROOTDEVICE = "upnp:rootdevices"
+  , AVTRANSPORT = "urn:schemas-upnp-org:service:AVTransport:1"
+
+var  TARGET = ROOTDEVICE;  // ROOTDEVICE : debug, AVTRANSPORT : air_play
+
 function check_overlapped(o, list){
 
 
@@ -28,7 +33,14 @@ var show = function(recv){
   var origin = o.location.split("/").slice(0,3).join("/")+ "/";
 
   if(check_overlapped(o,list)) return;
+
   list.push(o);
+
+  if(TARGET === ROOTDEVICE) {
+    $("#device_lists").append("<pre>"+str+"</pre>");
+    return;
+  }
+
 
   $.get(o.location, function(data){
     console.log(data)
@@ -42,7 +54,7 @@ var show = function(recv){
     services.each(function(e){
       var service = $(this)
 
-      if(service.find("serviceType").text() == "urn:schemas-upnp-org:service:AVTransport:1"){
+      if(service.find("serviceType").text() == TARGET){
         var controlurl = origin + service.find("controlURL").text()
 
         $("#device_lists").append("<dl><dt><img src='"+iconurl+"'></dt>")
@@ -151,5 +163,5 @@ var parse = function(data) {
 var upnp = new UPnP();
 upnp.onready = function(){
   this.listen(show);
-  this.search("urn:schemas-upnp-org:service:AVTransport:1");
+  this.search(TARGET);
 }
