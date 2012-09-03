@@ -95,10 +95,19 @@ function set_uri(control_url){
     + '</s:Envelope>'
     */
     // videourl = "http://192.168.0.11:10243/WMPNSSv4/3929665367/0_e0FFQUNFRThFLUY4REItNEEzOS1CREVBLURDRjgwOTUyMTNCMn0uMC44.wmv";
-    var data = "<?xml version=\"1.0\"?>";
-      data += "\n\n";
-
-      data += "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SetAVTransportURI xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID><CurrentURI xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"string\">"+videourl+"</CurrentURI><CurrentURIMetaData xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"string\"></CurrentURIMetaData></m:SetAVTransportURI></SOAP-ENV:Body></SOAP-ENV:Envelope>"
+    var data = "<?xml version=\"1.0\"?>"
+        + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+        + "<SOAP-ENV:Body>"
+        + "<m:SetAVTransportURI xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\">"
+        + "<InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID>"
+        + "<CurrentURI xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"string\">"
+        + videourl 
+        + "</CurrentURI>"
+        + "<CurrentURIMetaData xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"string\">"
+        + "</CurrentURIMetaData>"
+        + "</m:SetAVTransportURI>"
+        + "</SOAP-ENV:Body>"
+        + "</SOAP-ENV:Envelope>"
 
 
   $.ajax({
