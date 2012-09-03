@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+</head>
+<body>
+	<button>invoke</button>
+	<script>
+//  window.Intent = window.Intent || window.WebKitIntent;
+  
+
+//  window.navigator.startActivity = window.navigator.startActivity || window.navigator.webkitStartActivity;
+//  window.intent = window.intent || window.webkitIntent;
+
+document.querySelector("button").onclick = function(){
+	var intent = new WebKitIntent("http://webintents.org/edit", "image/*", "http://www.google.com");
+    window.navigator.webkitStartActivity(intent, function(e){
+
+    	console.log(e);
+    }, null);
+}
+/*
+
+
+	$("button").bind("click", function(e){
+
+
+
+
+		var url = location.origin+"/"+$(this).attr("href");
+		var intent = new Intent("http://webintents.org/view", "video/mp4", url);
+    window.navigator.startActivity(intent, null, null);
+  });
+  $("button.wi-edit").bind("click", function(e){
+    var intent = new Intent("http://webintents.org/edit", "image/*", null);
+    window.navigator.startActivity(intent, function(e){ console.log(e); }, null);
+  });
+}
+*/
+</script>
+
+</body>
