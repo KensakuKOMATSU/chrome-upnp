@@ -1,7 +1,5 @@
 var videourl = (launchData && launchData.intent && launchData.intent.data) || "http://192.168.0.9:3000/vmenu/videos/bunny.mp4";
 
-console.log(launchData && launchData.intent);
-
 $("#videourl").val(videourl).bind("input", function(e) {
   videourl = $(this).val();
 });
@@ -14,8 +12,6 @@ var ROOTDEVICE = "upnp:rootdevices"
 var  TARGET = ROOTDEVICE;  // ROOTDEVICE : debug, AVTRANSPORT : air_play
 
 function check_overlapped(o, list){
-
-
   for(i=0; i<list.length; i++){
     if (o.location == list[i].location){
       return true;

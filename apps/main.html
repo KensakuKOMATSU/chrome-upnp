@@ -2,24 +2,31 @@
 <html>
   <head>
     <title>Getting Started Extension's Popup</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css">
     <script src="/javascripts/jquery-1.7.2.min.js"></script>
   </head>
   <body>
-    <a href="http://upnp.komasshu.info/" target="_blank">demo site</a><br>
-    <output></output>
-    <b>video url => <input type="url" id="videourl"></b>
-    <button id="startsearch">start M-SEARCH</button>
-    <label><input type="checkbox" id="root">root device</label>
-    <div id="device_lists"></div>
+    <div class="container">
+      <h1>View on TV in your living room</h1>
+      <section id="video-meta">
+        <dl class="dl-horizontal">
+          <dt></dt>
+          <dd></dd>
+        </dl>
+      </section>
 
-    <dl>
-      <dt>some video</dt>
-      <dd><a href="#">hoge huga ==> web intents を invoke</a></dd>
-    </dl>
+      <output>
+        <div class="progress"></div>
+        <div class="controller"></div>
+      </output>
+    </div>
 
     <script src="/javascripts/upnp.js"></script>
-    <script src="/javascripts/airplay_.js"></script>
+    <script src="/javascripts/discovery.js"></script>
+    <script src="/javascripts/tv_controller.js"></script>
+    <script src="/javascripts/script.js"></script>
 
   </body>
 </html>

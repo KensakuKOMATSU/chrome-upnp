@@ -1,36 +1,30 @@
 <!doctype html>
 <html>
 <head>
-<script src="/javascripts/jquery-1.7.2.min.js"></script>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <script src="/javascripts/jquery-1.7.2.min.js"></script>
 </head>
 <body>
+  <div class="container">
   <header>
     <h1>Web Intents test</h1>
   </header>
   <section>
-    <h2>webintents.org/view</h2>
-    <table>
-      <tr>
-    <td>
-      <a alt="bunny(webintents)" href="videos/bunny.mp4" class="wi">
-    <img src="images/bunny120.png">
-    </a>
-    </td>
-    <td>
-      <ul>
-        <li><a href="videos/bunny.mp4">bunny (view in this site)</a></li>
-        <li><a href="videos/bunny.mp4" class="wi">bunny(webintents)</a></li>
-      </ul>
-    </td>
-    </tr>
-    </table>
-  </section>
-  <section>
-    <h2>webintents.org/edit</h2>
-    <p>
-      <button class="wi-edit">Invoke edit intent!!</button>
-    </p>
-  </section>
+    <h2>Video List</h2>
+    <dl class="dl-horizontal">
+      <dt>
+        <img src="images/bunny120.png">
+      </dt>
+      <dd>
+        <h3>Big Buck BUNNY</h3>
+        <ul class="unstyled">
+          <li><a href="videos/bunny.mp4">このサイトで見る</a></li>
+          <li><a href="videos/bunny.mp4" data-name="Big Buck BUNNY" data-thumbnail="images/bunny120.png" class="wi">身の回りのTVで見る（via WebIntents）</a></li>
+        </ul>
+      </dd>
+    </dl>
+   </section>
+  </div>
 
 
 
@@ -41,14 +35,19 @@
   window.intent = window.intent || window.webkitIntent;
 
 	$("a.wi").bind("click", function(e){
-		e.preventDefault();
-		var url = location.origin+"/"+$(this).attr("href");
-		var intent = new Intent("http://webintents.org/view", "video/mp4", url);
+    var name = $(this).data('name')
+      , thumbnail_url = location.origin + location.pathname + $(this).data('thumbnail')
+		  , url = location.origin+location.pathname+$(this).attr("href")
+      , data = {
+        "name" : name,
+        "thumbnailUrl" : thumbnail_url,
+        "url": url
+      }
+
+		var intent = new Intent("http://webintents.org/view", "video/mp4", data);
     window.navigator.startActivity(intent, null, null);
-  });
-  $("button.wi-edit").bind("click", function(e){
-    var intent = new Intent("http://webintents.org/edit", "image/*", null);
-    window.navigator.startActivity(intent, function(e){ console.log(e); }, null);
+
+    e.preventDefault();
   });
 }
 </script>
