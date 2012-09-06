@@ -42,7 +42,8 @@ var tvController;
 	}
 	tvController = {
 		url: null,
-		control_url: null,
+		avcontrol_url: null,
+		rendering_url: null,
 		xmlHeader: "<?xml version=\"1.0\" encoding=\"utf-8\"?><s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body>",
 		xmlFooter: "</s:Body></s:Envelope>",
 		defaultSettings : {
@@ -76,9 +77,18 @@ var tvController;
 		VOLUMEUP: 101,
 		VOLUMEDOWN: 102,
 		sendSoap_: function(data, actionName, serviceType, callback){
+			var urls = {
+				"Play" : this.avcontrol_url,
+				"Stop" : this.avcontrol_url,
+				"Pause" : this.avcontrol_url,
+				"SetVolume" : this.rendering_url,
+				"GetVolume" : this.rendering_url
+			}
+
+			console.log(actionName, urls[actionName])
 		  $.ajax({
 		    type: "POST",
-		    url: this.control_url,
+		    url: urls[actionName],
 		    headers: {
 		      SOAPACTION: "\"urn:schemas-upnp-org:service:" + serviceType + ":1#" + actionName +"\""
 		    },
@@ -102,14 +112,15 @@ var tvController;
 		  var data = this.xmlHeader, settings = settings || {};
 		  data += '<u:' + actionName + ' xmlns:u="urn:schemas-upnp-org:service:'+ serviceType + ':1">'
 
+		  console.log(args, actionName)
+
 		  for(var k=0; k<args.length; k++){
-		    if(args[k].direction == "in"){
-		      if(settings.hasOwnProperty(args[k].name)){
-		        data += '<' + args[k].name + '>' + settings[args[k].name] + '</' + args[k].name + '>'
+		   	  var arg = args[k];
+		      if(settings.hasOwnProperty(arg)){
+		        data += '<' + arg + '>' + settings[arg] + '</' + arg + '>'
 		      } else {
-		        data += '<' + args[k].name + '>' + this.defaultSettings[args[k].name] + '</' + args[k].name + '>'
+		        data += '<' + arg + '>' + this.defaultSettings[arg] + '</' + arg + '>'
 		      }
-		    }
 		  }
 
 		  data +='</u:'+ actionName +'>'
@@ -118,15 +129,31 @@ var tvController;
 		  return(data)
 
 		},
-		control_ : function(action, callback) {
-			var args = [
-				{"name": "InstanceID", "direction": "in"}, 
-				{"name": "Speed", "direction": "in"} 
-			],
-			serviceType = "AVTransport";
+		control_ : function(action, callback, arg) {
+			var args_ = {
+				"default" :["InstanceID", "Speed"]
+				, "SetVolume" :["InstanceID", "Channel", "DesiredVolume"]
+				, "GetVolume" :["InstanceID", "Channel"]
+			}
+			var settings_ = {
+				"default": {}, 
+				"SetVolume": {"DesiredVolume": arg} 
+			}
 
-			var xml = this.getXml_(args, action, serviceType);
+			var serviceType = action.indexOf("Volume") === -1 ? "AVTransport" :"RenderingControl"
+			var args__ = args_.hasOwnProperty(action) ? args_[action] : args_.default;
+			var settings__ = settings_.hasOwnProperty(action) ? settings_[action] : settings_.default;
+
+			console.log(settings__);
+			var xml = this.getXml_(args__, action, serviceType, settings__);
+			console.log(xml);
 			this.sendSoap_(xml, action, serviceType, callback);
+		},
+		setVolume: function(desiredVolume, callback){
+			this.control_("SetVolume", callback, desiredVolume)
+		},
+		getVolume: function(callback){
+			this.control_("GetVolume", callback);
 		},
 		play: function(callback){
 			this.control_("Play", callback);
@@ -137,11 +164,14 @@ var tvController;
 		pause: function(callback){
 			this.control_("Pause", callback);
 		}, 
-		start: function(url, control_url) {
+		start: function(url, avcontrol_url, rendering_url) {
 			this.url = url;
-			this.control_url = control_url;
+			this.avcontrol_url = avcontrol_url;
+			this.rendering_url = rendering_url;
+
+			// send stop message before set url
 			this.stop(function(mesg){
-				set_url(url, control_url)
+				set_url(url, avcontrol_url)
 			})
 		}
 	}

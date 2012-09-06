@@ -1,6 +1,13 @@
 var Discovery;
 
 (function(){
+	Array.prototype.has = function(str) {
+		for(var i = 0, l = this.length; i < l; i++) {
+			if(this[i] === str) return true;
+		}
+		return false;
+	}
+
 	function check_overlapped(o, list){
 	  for(i=0; i<list.length; i++){
 	    if (o.location == list[i].location){
@@ -29,7 +36,10 @@ var Discovery;
 
 	Discovery = {
 		lists: [],
-		serviceType: "urn:schemas-upnp-org:service:AVTransport:1",
+		serviceTypes: [
+			"urn:schemas-upnp-org:service:AVTransport:1",
+			"urn:schemas-upnp-org:service:RenderingControl:1"
+		],
 
 		parse_: function(recv, callback){
 			var o = parse(recv.data)
@@ -45,22 +55,28 @@ var Discovery;
 			    var icon_url = origin + $(data).find("device > iconList > icon").eq(0).find("url").text();
 			    var service_type = $(data).find("service > serviceType")
 			    var services = $(data).find("serviceList > service")
+			    var control_urls = {};
+
 
 			    services.each(function(e){
-			      var service = $(this)
+			    	var type =  $(this).find("serviceType").text()
 
-			      if(service.find("serviceType").text() == self.serviceType){
-			        var control_url = origin + service.find("controlURL").text()
+			    	console.log(self.serviceTypes);
 
-			        var ret = {
-			        	"friendlyName" : friendly_name,
-			        	"iconUrl" : icon_url,
-			        	"serviceType" : self.serviceType,
-			        	"controlUrl" : control_url
-			        }
-			        callback(ret);
-			      }
+			        if(self.serviceTypes.has(type) ){
+				        var control_url = origin + $(this).find("controlURL").text()
+
+				        control_urls[type] = control_url;
+				    }
 			    })
+
+		        var ret = {
+		        	"friendlyName" : friendly_name,
+		        	"iconUrl" : icon_url,
+		        	"serviceType" : self.serviceTypes,
+		        	"controlUrls" : control_urls
+		        }
+		        callback(ret);
 			})
 		},
 
@@ -72,7 +88,7 @@ var Discovery;
 				this.listen(function(recv){
 					self.parse_(recv, callback);
 				});
-				this.search(self.serviceType);
+				this.search(self.serviceTypes[0]);
 			} 
 		}
 	}
