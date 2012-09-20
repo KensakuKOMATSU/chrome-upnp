@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <script src="/javascripts/jquery-1.7.2.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <form>
+      <label>action:
+      <input type="text" name="action" value="chrome-extension://mysandbox/op">
+      </label><br>
+      <label>type:
+      <input type="text" name="type" value="text/plain">
+      </label><br>
+      <label>data:
+      <input type="text" name="data" value="PING">
+      </label><br>
+      <label>service:
+        <input type="text" name="service" value="chrome-extension://mjgdbmedbkbjlcgncadbcaelanfhakle/_generated_background_page.html">
+      </label><br>
+
+      <button type="submit">invoke</button>
+    </form>
+  </div>
+
+
+
+<script>
+ if(window.WebKitIntent || window.Intent) {
+  window.Intent = window.Intent || window.WebKitIntent;
+  window.navigator.startActivity = window.navigator.startActivity || window.navigator.webkitStartActivity;
+//  window.intent = window.intent || window.webkitIntent;
+
+
+  $("form").bind("submit", function(e){
+    var action = $(this).find("input[name=action]").val()
+      , type = $(this).find("input[name=type]").val()
+      , data = $(this).find("input[name=data]").val()
+      , service = $(this).find("input[name=service]").val()
+
+    var channel = new MessageChannel();
+
+    var intent = new Intent({action: action, type: type, data:"a", transfer: [channel.port1], service: service} );
+    window.navigator.startActivity(intent, function(e){ console.log(e); }, function(e){ console.dir(e); });
+
+    e.preventDefault();
+  });
+}
+</script>
+</body>
+</html>
