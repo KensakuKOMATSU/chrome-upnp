@@ -82,7 +82,7 @@ console.log("upnp");
         throw("an Error occured while sending M-SEARCH : "+e.bytesWritten);
       }
       console.log("=== SENT UPnP M-SEARCH ===");
-      console.log(e);
+      console.dir(e);
 
       if(typeof(callback) === "function")
         callback();

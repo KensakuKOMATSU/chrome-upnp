@@ -45,6 +45,8 @@ var Discovery;
 			var o = parse(recv.data)
 				, origin = o.location.split("/").slice(0,3).join("/")+ "/";
 
+			console.dir(o)
+
 			if(check_overlapped(o,this.lists)) return;
 
 			this.lists.push(o);
@@ -80,15 +82,16 @@ var Discovery;
 			})
 		},
 
-		start: function(callback){
+		start: function(callback, st){
 			var upnp = new UPnP();
 			var self = this;
+			st = !!st === false ? this.serviceTypes[0] : st;
 
 			upnp.onready = function(){
 				this.listen(function(recv){
 					self.parse_(recv, callback);
 				});
-				this.search(self.serviceTypes[0]);
+				this.search(st);
 			} 
 		}
 	}

@@ -3,26 +3,16 @@
   "name": "UPnP M-Search app",
   "description": "show UPnP M-Search result in your local network. This web app is utilizing Chrome's raw socket api :)",
   "version": "0.1",
-  "minimum_chrome_version": "23",
+  "minimum_chrome_version": "24",
   "app": {
     "background": {
-      "scripts": ["main.js"]
+      "scripts": ["main.js", "chromexpress/buffer.js", "chromexpress/server.js", "chromexpress/app.js"]
     }
   },
   "icons": {
     "16": "/images/icon_16.png",
     "128": "/images/icon_128.png"
   },
-//  "intents": {
-//    "http://webintents.org/view": [
-//    {
-//      "type": ["video/mp4"],
-//      "href": "/main.html",
-//      "title" : "View in Local NW devices"
-//      "disposition" : "inline" or "window"
-//    }
-//  ]},
- 
   "intents": {
     "http://webintents.org/view": [
     {
@@ -35,7 +25,9 @@
     "experimental",
     {"socket": [
       "udp-bind",
-      "udp-send-to"
+      "udp-send-to",
+      "tcp-listen",
+      "tcp-connect"
     ]}
   ]
 }

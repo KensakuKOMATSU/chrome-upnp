@@ -27,9 +27,41 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+
+Array.prototype.last = function(){
+  return this[this.length - 1]
+}
+
 // Routes
 
+urls = []
+
 app.get('/', routes.index);
+
+app.get('/proxy_url/:source', function(req, res){
+  var url = req.params.source;
+
+  var idx = urls.indexOf(url)
+    , ret = idx === -1 ? urls.push(url) - 1 : idx;
+
+  console.dir(req.headers.host);
+
+  ret = "http://" + req.headers.host + "/proxy/" + ret + ".mp4"
+
+  res.end(ret)
+})
+
+app.get('/proxy/:url', function(req, res){
+  console.log(urls.last())
+  var idx = decodeURIComponent(req.params.url).split(".")[0].split("/").last();
+  console.log(idx)
+  console.log(urls[idx])
+
+
+
+
+  res.end(urls[idx])
+})
 
 var port = process.env.PORT || 3000;
 

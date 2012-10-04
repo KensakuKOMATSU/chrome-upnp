@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "ChromexPress",
+  "description": "chrome webserver like express of node",
+  "version": "1",
+  "minimum_chrome_version": "24",
+  "app": {
+    "background": {
+      "scripts": ["buffer.js", "server.js", "app.js"]
+    }
+  },
+  "permissions": [
+    "experimental",
+    {"socket": [
+      "tcp-listen"
+    ]}
+  ]
+}
