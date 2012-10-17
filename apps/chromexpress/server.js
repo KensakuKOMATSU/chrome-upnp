@@ -241,6 +241,7 @@
     var len = body.length;
     var code = 200;
     var self = this;
+    this.setHeader('Access-Control-Allow-Origin', '*');
     this.setHeader('Content-Length', len);
 
     var header = this.createHeader(code);

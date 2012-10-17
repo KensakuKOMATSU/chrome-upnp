@@ -1,3 +1,30 @@
+/**
+ * UPnP
+ */
+var UPnPDevices = [];
+
+Discovery.start(function(data){
+  console.dir(data);
+  UPnPDevices.push(data);
+});
+setTimeout(function(){
+console.log("start discovery...")
+  Discovery.start(function(data){
+    console.dir(data);
+    UPnPDevices.push(data);
+  });
+}, 5000)
+
+
+
+
+
+/**
+ * internal webserver
+ */
+
+
+
 var server = new Server();
 
 
@@ -18,6 +45,11 @@ server.get('/', function(req, res){
     res.render("hoge");
 });
 
+server.get('/upnpdevices', function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(UPnPDevices))
+})
+
 server.get('/set', function(req, res){
   youtubeurl = req.params.url;
   var arr = youtubeurl.slice(7).split("/")
@@ -25,6 +57,39 @@ server.get('/set', function(req, res){
 
   res.render("set complete");
 });
+
+server.get('/start', function(req, res){
+  var avcontrol_url  = req.params.avcontrol_url;
+  var rendering_url  = req.params.rendering_url;
+  tvController.start(proxyurl+"/video.mp4", avcontrol_url, rendering_url)
+
+  res.render("start")
+})
+server.get('/play', function(req, res){
+  tvController.play(function(){});
+  res.render("play")
+})
+server.get('/stop', function(req, res){
+  tvController.stop(function(){});
+  res.render("stop")
+})
+server.get('/pause', function(req, res){
+  tvController.pause(function(){});
+  res.render("pause")
+})
+server.get('/setVolume', function(req, res){
+  var level  = req.params.level;
+  tvController.setVolume(level, function(e){
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(e.querySelector("CurrentVolume").textContent)
+  });
+})
+server.get('/getVolume', function(req, res){
+  tvController.getVolume(function(e){
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(e.querySelector("CurrentVolume").textContent)
+  });
+})
 
 server.get('/video.mp4', function(req, res){
   if(!!youtubeurl === false) {
@@ -84,6 +149,15 @@ server.head('/video.mp4', function(req, res){
 });
 
 server.listen(0, function(err){
+
+  chrome.socket.getNetworkList(function(list){
+    console.dir(list);
     proxyurl = "http://localhost:"+server.port;
-    console.log('listening http://localhost:'+server.port);
+    list.forEach(function(if_){
+      if(if_.address.match(/^\d+\.\d+\.\d+\.\d+$/)) address = if_.address;
+      console.log(address);
+    })
+    if(!!address) proxyurl = proxyurl.replace('localhost', address);
+    console.log('listening '+proxyurl);
+  });
 });

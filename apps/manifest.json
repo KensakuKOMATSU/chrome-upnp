@@ -6,7 +6,16 @@
   "minimum_chrome_version": "24",
   "app": {
     "background": {
-      "scripts": ["main.js", "chromexpress/buffer.js", "chromexpress/server.js", "chromexpress/app.js"]
+      "scripts": [
+        "javascripts/jquery-1.7.2.min.js",
+        "javascripts/upnp.js",
+        "javascripts/discovery.js",
+        "javascripts/tv_controller.js",
+        "chromexpress/buffer.js",
+        "chromexpress/server.js", 
+        "chromexpress/app.js",
+        "main.js"
+      ]
     }
   },
   "icons": {
@@ -15,11 +24,18 @@
   },
   "intents": {
     "http://webintents.org/view": [
-    {
-      "type": ["video/mp4"],
-      "title" : "View in Local NW devices"
-    }
-  ]},
+      {
+        "type": ["video/mp4"],
+        "title" : "View in Local NW devices"
+      }
+    ],
+    "chrome-extension://app2/proxyurl": [
+      {
+        "type": ["text/url-list"],
+        "title" : "View in Local NW devices"
+      }
+    ]
+  },
   "permissions": [
     "http://*/",
     "experimental",
