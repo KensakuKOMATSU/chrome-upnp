@@ -259,5 +259,9 @@
     chrome.socket.write(this.req.sid, body, function(writeInfo) {});
   }
 
+  Response.prototype.close = function(){
+    chrome.socket.destroy(this.req.sid);
+  }
+
   global.Server = Server;
 }(this));

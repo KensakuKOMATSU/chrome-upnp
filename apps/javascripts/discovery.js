@@ -45,8 +45,6 @@ var Discovery;
 			var o = parse(recv.data)
 				, origin = o.location.split("/").slice(0,3).join("/")+ "/";
 
-			console.dir(o)
-
 			if(check_overlapped(o,this.lists)) return;
 
 			this.lists.push(o);
@@ -62,8 +60,6 @@ var Discovery;
 
 			    services.each(function(e){
 			    	var type =  $(this).find("serviceType").text()
-
-			    	console.log(self.serviceTypes);
 
 			        if(self.serviceTypes.has(type) ){
 				        var control_url = origin + $(this).find("controlURL").text()

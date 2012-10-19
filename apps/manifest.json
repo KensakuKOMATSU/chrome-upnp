@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "UPnP M-Search app",
-  "description": "show UPnP M-Search result in your local network. This web app is utilizing Chrome's raw socket api :)",
-  "version": "0.1",
+  "name": "DLNA controller",
+  "description": "With this app, you can control DLNA devices from your browser.",
+  "version": "0.2",
   "minimum_chrome_version": "24",
   "app": {
     "background": {
@@ -10,6 +10,7 @@
         "javascripts/jquery-1.7.2.min.js",
         "javascripts/upnp.js",
         "javascripts/discovery.js",
+        "javascripts/upnp_devices.js",
         "javascripts/tv_controller.js",
         "chromexpress/buffer.js",
         "chromexpress/server.js", 
@@ -23,16 +24,16 @@
     "128": "/images/icon_128.png"
   },
   "intents": {
-    "http://webintents.org/view": [
+    "http://komasshu.info/dlnaviewer": [
       {
         "type": ["video/mp4"],
         "title" : "View in Local NW devices"
       }
     ],
-    "chrome-extension://app2/proxyurl": [
+    "chrome-extension://komasshu.info/dlnawrapper": [
       {
         "type": ["text/url-list"],
-        "title" : "View in Local NW devices"
+        "title" : "Wrapper for DLNA devices(now supports renderer)"
       }
     ]
   },

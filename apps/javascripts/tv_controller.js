@@ -170,9 +170,9 @@ var tvController;
 			this.rendering_url = rendering_url;
 
 			// send stop message before set url
-			this.stop(function(mesg){
+			// this.stop(function(mesg){
 				set_url(url, avcontrol_url)
-			})
+			// })
 		}
 	}
 

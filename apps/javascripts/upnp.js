@@ -1,7 +1,5 @@
 var UPnP;
 
-console.log("upnp");
-
 (function(){ 
   /**
    * utilities
@@ -28,7 +26,6 @@ console.log("upnp");
     for(var i = 0, l = arr.length; i < l; i++) {
       str += String.fromCharCode.call(this, arr[i]);
     }
-    console.log(str);
     return str;
   }
 
@@ -75,14 +72,11 @@ console.log("upnp");
     }
 
     var ssdp = M_SEARCH_REQUEST.replace("{{st}}", st);
-    console.log(ssdp);
     var buffer = t2ab(ssdp);
     var closure_ = function(e){
       if(e.bytesWritten < 0) {
         throw("an Error occured while sending M-SEARCH : "+e.bytesWritten);
       }
-      console.log("=== SENT UPnP M-SEARCH ===");
-      console.dir(e);
 
       if(typeof(callback) === "function")
         callback();
@@ -104,8 +98,6 @@ console.log("upnp");
 
     var self = this;
     var closure_ = function(recv){
-      console.log("=== RECV UPnP packet from "+recv.address+"===");
-      console.log(recv);
       recv.data = ab2t(recv.data);
       if(typeof(callback) === "function") {
         callback(recv);
