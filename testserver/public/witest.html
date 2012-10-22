@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="javascripts/jquery-1.7.2.min.js"></script>
+  </head>
+  <body>
+    <button id="pick-image">pick image</button>
+    <button id="edit-image">edit image</button>
+    <hr>
+    <output>
+    <img>
+    </output>
+    <hr>
+    <div id="console"></div>
+  </body>
+
+  <script>
+  $("div#console").text(location.href)
+
+    $("button#pick-image").bind("click", function(e){
+      var intent = new WebKitIntent({
+        "action": "http://webintents.org/pick",
+        "type": "image/*",
+        "data": {"target": "http://192.168.0.6:40320/wscamera/html/index.html"}
+      })
+      navigator.webkitStartActivity(intent, onSuccess, onError);
+    });
+    $("button#edit-image").bind("click", function(e){
+      var intent = new WebKitIntent({
+        "action": "http://webintents.org/edit",
+        "type": "image/*",
+        "data": $("output > img").attr("src")
+      })
+      navigator.webkitStartActivity(intent, onSuccess, onError);
+    });
+    var onSuccess = function(e) {
+      console.log("success")
+      $("output > img").attr("src", e);
+    }
+    var onError = function(e) {
+      console.log("error" + e)
+    }
+  </script>
+
+</html>

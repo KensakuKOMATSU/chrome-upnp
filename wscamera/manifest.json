@@ -1,19 +1,18 @@
 {
-  "name": "Browser to TV demo",
+  "name": "WebSocket Camera",
   "description": "Let's move your preffered video to TV!",
   "manifest_version": 2,
   "version": "0.1",
   "intents": {
-    "http://webintents.org/view": [ {
-      "type": ["video/mp4"],
+    "http://webintents.org/pick": [ {
+      "type": ["image/*"],
       "href": "main.html",
-      "title": "tv controller",
+      "title": "websocket camera",
       "disposition": "window"
     } ]
   },
   "icons": {
   },
   "permissions": [
-    "tabs"
   ]
 }

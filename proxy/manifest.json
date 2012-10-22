@@ -1,0 +1,28 @@
+{
+  "name": "WebIntents proxy",
+  "description": "WebIntents proxy",
+  "manifest_version": 2,
+  "version": "0.1",
+  "intents": {
+    "http://webintents.org/pick": [ {
+      "type": ["image/*"],
+      "href": "http://komachu.sakura.ne.jp/webintents/proxy.html",
+    //  "href": "pick.html",
+      "title": "Web Intents proxy for pick images",
+      "disposition": "window"
+    } ]
+  },
+  "app": {
+    "urls": [
+      "http://komachu.sakura.ne.jp/webintents/proxy.html"
+    ],
+    "launch": {
+      "web_url": "http://komachu.sakura.ne.jp/webintents/proxy.html"
+    }
+  },
+  "icons": {
+  },
+  "permissions": [
+    "http://*/*"
+  ]
+}
