@@ -63,6 +63,13 @@ var Controller = {"url": ""}
       res.render("this is controller");
   });
 
+  self.server.get('/webintents/devices', function(req, res){
+    Discovery.start(function(data){
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify(data))
+    }, "urn:schemas-webintents-org:service:WebIntents:1", true);
+  })
+
   self.server.get('/upnpdevices', function(req, res){
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(UPnPDevices))

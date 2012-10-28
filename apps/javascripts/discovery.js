@@ -16,13 +16,16 @@ var Discovery;
 	  }
 	  return false;
 	}
-	var parse = function(data) {
+	var parse = function(data, address) {
 	  var arr = data.replace(/\r\n|\r/g, "\n").split("\n"), ret = {};
 
 	  for(var i = 0, l = arr.length; i < l; i++ ) {
 	    var a = arr[i].split(":");
 	    var k = a[0].toLowerCase();
-	    var v = a.slice(1).join(":");
+	    var v = a.slice(1).join(":").replace(/^\s*/, "");
+
+	    if(k === "location")
+	    	v = v.replace("::1%1", address)
 
 	    if(!!v) {
 	      ret[k] = v;
@@ -41,9 +44,12 @@ var Discovery;
 			"urn:schemas-upnp-org:service:RenderingControl:1"
 		],
 
-		parse_: function(recv, callback){
-			var o = parse(recv.data)
+		parse_: function(recv, callback, cancel_flag){
+			var o = parse(recv.data, recv.address)
 				, origin = o.location.split("/").slice(0,3).join("/")+ "/";
+			if(!!cancel_flag) {
+				callback(o);
+			}
 
 			if(check_overlapped(o,this.lists)) return;
 
@@ -78,14 +84,28 @@ var Discovery;
 			})
 		},
 
-		start: function(callback, st){
+		start: function(callback, st, flag /* cancel checking description.xml or not */){
 			var upnp = new UPnP();
 			var self = this;
+			var sent = false;
 			st = !!st === false ? this.serviceTypes[0] : st;
+
+			setTimeout(function(){
+				if(!!sent === false) {
+					sent = true;
+					callback({});
+				}
+			}, 10000)
+
+
 
 			upnp.onready = function(){
 				this.listen(function(recv){
-					self.parse_(recv, callback);
+					if(!!sent === false) {
+						sent = true;
+						console.log(recv);
+						self.parse_(recv, callback, flag);
+					}
 				});
 				this.search(st);
 			} 

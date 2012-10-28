@@ -5,7 +5,10 @@
     <script src="javascripts/jquery-1.7.2.min.js"></script>
   </head>
   <body>
-    <button id="pick-image">pick image</button>
+    <button id="discover-device">discover devices</button><br>
+    <section id="discovered">
+    </section>
+    <button id="pick-image">pick image w/ Explicit Intent</button>
     <button id="edit-image">edit image</button>
     <hr>
     <output>
@@ -16,13 +19,40 @@
   </body>
 
   <script>
+  $("#pick-image,#edit-image").hide();
+  var proxyurl, cameraurl;
   $("div#console").text(location.href)
+    $("button#discover-device").on("click", function(){
+      var intent = new WebKitIntent({
+        "action": "chrome-extension://komasshu.info/dlnawrapper",
+        "type": "text/url-list",
+        data: 'proxyurl',
+        service: 'chrome-extension://facphhlidnbehckiafllpiffdcekefak/_generated_background_page.html'
+      });
+
+      navigator.webkitStartActivity(intent, function(e){
+        console.log("success")
+        proxyurl = e
+        $.getJSON(proxyurl+"/webintents/devices", function(e){
+          console.log(e);
+          cameraurl = e.location+e['location.webintents.org'].replace(/^\//, '')
+          $("#discovered").html("<strong>"+cameraurl+"</strong>")
+          $("#pick-image,#edit-image").fadeIn();
+
+          console.log(cameraurl)
+        })
+      }, function(e){
+        throw(e);
+      })
+    })
+
+
 
     $("button#pick-image").bind("click", function(e){
       var intent = new WebKitIntent({
         "action": "http://webintents.org/pick",
         "type": "image/*",
-        "data": {"target": "http://192.168.0.6:40320/wscamera/html/index.html"}
+        "data": {"target": cameraurl}
       })
       navigator.webkitStartActivity(intent, onSuccess, onError);
     });
