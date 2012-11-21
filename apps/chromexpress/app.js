@@ -76,8 +76,11 @@ var Controller = {"url": ""}
   })
 
   self.server.get('/set', function(req, res){
+    console.log("YouTube's URL");
+    console.dir(req);
+    console.log(req.params.url);
     Proxy.videourl = req.params.url;
-
+    // Proxy.videourl = "http://localhost:3000/video.mp4"
     // [TODO] Now assuming that protocol is 'http://', so if protocol schema
     // is other than it (ex, https://), it doesn't work. Ofcource, if this support
     // https, proxy feature has to support https features ( that's so hard thing )
@@ -97,6 +100,7 @@ var Controller = {"url": ""}
     var avcontrol_url  = req.params.avcontrol_url;
     var rendering_url  = req.params.rendering_url;
     tvController.start(Proxy.url+"/video.mp4", avcontrol_url, rendering_url)
+    // tvController.start("http://192.168.2.3:3000/video.mp4", avcontrol_url, rendering_url)
 
     tvstat.set(Proxy.videourl, "video/mp4");
 
@@ -181,13 +185,17 @@ var Controller = {"url": ""}
   REQ = REQ.join(LFCR);
 
   var proxy_ = function(method, res){
+    var a = self.videohost.split(":")
+      , host = a[0]
+      , port = (!!a[1] && parseInt(a[1])) || 80
+      console.log(host, port);
    chrome.socket.create('tcp', {}, function(createInfo) {
       var sid = createInfo.socketId;
-      chrome.socket.connect(sid, self.videohost, 80, function(e) {
+      chrome.socket.connect(sid, host, port, function(e) {
         var request = REQ
           .replace("{%method%}", method)
           .replace("{%path%}", self.videopath)
-          .replace("{%host%}", self.videohost);
+          .replace("{%host%}", host);
 
         chrome.socket.write(sid, encodeToBuffer(request), function(e){
           console.log("=== [PROXY] sent resquest header ===");
@@ -197,7 +205,7 @@ var Controller = {"url": ""}
           chrome.socket.read(sid, 65535, function(readInfo) {
             console.log("=== [PROXY] received response header ===");
             console.log("method : "+method);
-            console.log(decodeFromBuffer(readInfo.data));
+            console.log(decodeFromBuffer(readInfo.data).slice(0, 300));
 
             res.sendraw(readInfo.data);
 
@@ -206,7 +214,7 @@ var Controller = {"url": ""}
                 res.close();
                 chrome.socket.destroy(sid);
                 return;
-              } 
+              }
               chrome.socket.read(sid, 65535, function(readInfo) {
                 if(readInfo.resultCode > 0) {
                   res.sendraw(readInfo.data);

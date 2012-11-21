@@ -4,7 +4,7 @@
   "manifest_version": 2,
   "version": "0.1",
   "intents": {
-    "http://webintents.org/pick": [ {
+    "chrome-extension://komasshu.info/pick-proxy": [ {
       "type": ["image/*"],
       "href": "http://komachu.sakura.ne.jp/webintents/proxy.html",
     //  "href": "pick.html",

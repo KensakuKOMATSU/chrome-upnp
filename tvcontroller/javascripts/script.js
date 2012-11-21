@@ -1,12 +1,14 @@
 // description, thumbnail_url, title, url
 
-var data = window.webkitIntent.data;
+var data = (window.webkitIntent && window.webkitIntent.data) || null;
 var proxyurl;
 
-$("img").attr("src",data.thumbnail_url);
-$("h2").text(data.title);
-$("p.description").text(data.description);
-$("p.youtubeurl").html("<div class='alert'>"+data.url+"</div>");
+if(!!data) {
+  $("img").attr("src",data.thumbnail_url);
+  $("h2").text(data.title);
+  $("p.description").text(data.description);
+  $(".youtubeurl").val(data.url);
+}
 
 
 $("#discovery").click(function(){
@@ -51,7 +53,13 @@ $("#discovery").click(function(){
 $("a.device").live("click", function(){
   var avcontrol_url = $(this).data("avcontrolurl").replace(" ", "")
     , rendering_url = $(this).data("renderingurl").replace(" ", "")
-    , url = data.url
+    , url = $(".youtubeurl").val()
+
+  if(!!url === false) {
+    alert("URL doesn't set");
+    return;
+  }
+
   var html = $(this).html();
   $("#devices p").html("<span class='label label-success'>Selected device</span><ul class='unstyled'><li><pre>"+html+"</pre></li></ul>");
   $("#buttons button,input").attr("disabled", false);

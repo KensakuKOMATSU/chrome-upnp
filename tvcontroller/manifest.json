@@ -1,6 +1,6 @@
 {
   "name": "Browser to TV demo",
-  "description": "Let's move your preffered video to TV!",
+  "description": "Let's push your preffered video to TV!",
   "manifest_version": 2,
   "version": "0.1",
   "intents": {
@@ -10,6 +10,11 @@
       "title": "tv controller",
       "disposition": "window"
     } ]
+  },
+  "app": {
+    "launch": {
+      "local_path": "main.html"
+    }
   },
   "icons": {
   },
