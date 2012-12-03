@@ -48,11 +48,10 @@ var tvstat = new TVStat();
 
 
 /**
- * internal webserver
+ * internal webservers
  */
 
-var Controller = {"url": ""}
-  , Proxy = {"url": "", "videourl": "", "videohost": "", "videopath": ""};
+var Controller = {"url": "", "server": null};
 
 (function(){
   var self = Controller;
@@ -64,6 +63,9 @@ var Controller = {"url": ""}
   });
 
   self.server.get('/webintents/devices', function(req, res){
+    // [FIXME] Discovery is static object that below code means mixturing UDP's receive status.
+    // to address this phenomenon, Discovery should not be static object and treat as
+    // separate object.
     Discovery.start(function(data){
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify(data))
@@ -75,39 +77,22 @@ var Controller = {"url": ""}
     res.send(JSON.stringify(UPnPDevices))
   })
 
+
   self.server.get('/set', function(req, res){
-    console.log("YouTube's URL");
-    console.dir(req);
-    console.log(req.params.url);
-    Proxy.videourl = req.params.url;
-    // Proxy.videourl = "http://localhost:3000/video.mp4"
-    // [TODO] Now assuming that protocol is 'http://', so if protocol schema
-    // is other than it (ex, https://), it doesn't work. Ofcource, if this support
-    // https, proxy feature has to support https features ( that's so hard thing )
-    var arr = Proxy.videourl.slice(7).split("/")
-    Proxy.videohost = arr[0], Proxy.videopath = "/"+arr.slice(1).join("/")
-
-    var ret = {}
-    for(var key in Proxy) if(Proxy.hasOwnProperty(key)) {
-      ret[key] = Proxy[key];
-    }
-
-    res.setHeader("content-type", "application/json")
-    res.send(JSON.stringify(ret));
-  });
-
-  self.server.get('/start', function(req, res){
+    var video_url = req.params.video_url;
     var avcontrol_url  = req.params.avcontrol_url;
     var rendering_url  = req.params.rendering_url;
-    tvController.start(Proxy.url+"/video.mp4", avcontrol_url, rendering_url)
+
+    var proxy_url = Proxy.set(video_url)
+    tvController.start(proxy_url, avcontrol_url, rendering_url)
     // tvController.start("http://192.168.2.3:3000/video.mp4", avcontrol_url, rendering_url)
 
-    tvstat.set(Proxy.videourl, "video/mp4");
+    tvstat.set(video_url, "video/mp4");
 
     var ret = {
       "avcontrol_url": avcontrol_url,
       "rendering_url": rendering_url,
-      "proxy_url": Proxy.url
+      "proxy_url": proxy_url
     }
 
     res.setHeader("content-type", "application/json")
@@ -167,6 +152,7 @@ var Controller = {"url": ""}
   });
 }());
 
+var Proxy = {"url": "", "videourl": "", "videohost": "", "videopath": "", "server": null};
 
 /**
  * Proxy implementations
@@ -184,29 +170,60 @@ var Controller = {"url": ""}
   ], LFCR = "\r\n"
   REQ = REQ.join(LFCR);
 
-  var proxy_ = function(method, res){
-    var a = self.videohost.split(":")
+  // [FIXME] Now, connecting to real server is implemented w/ SOCKET API. but, it should be changed and
+  // make use of XMLHTTPRequest. Because it will well work with HTTPS, redirection, etc...
+  var proxy_ = function(method, videourl, res){
+    var arr = videourl.slice(7).split("/")
+    var videohost = arr[0], videopath = "/"+arr.slice(1).join("/")
+    
+    var a = videohost.split(":")
       , host = a[0]
       , port = (!!a[1] && parseInt(a[1])) || 80
       console.log(host, port);
-   chrome.socket.create('tcp', {}, function(createInfo) {
+    chrome.socket.create('tcp', {}, function(createInfo) {
       var sid = createInfo.socketId;
       chrome.socket.connect(sid, host, port, function(e) {
         var request = REQ
           .replace("{%method%}", method)
-          .replace("{%path%}", self.videopath)
-          .replace("{%host%}", host);
+          .replace("{%path%}", videopath)
+          .replace("{%host%}", videohost);
 
+        // send HTTP Request Header
         chrome.socket.write(sid, encodeToBuffer(request), function(e){
           console.log("=== [PROXY] sent resquest header ===");
           console.log(request)
-          console.log("sendHeader completed", e);
 
+          // receive HTTP Response Header
           chrome.socket.read(sid, 65535, function(readInfo) {
             console.log("=== [PROXY] received response header ===");
-            console.log("method : "+method);
-            console.log(decodeFromBuffer(readInfo.data).slice(0, 300));
+            console.log("[[ method : "+method+" ]]");
 
+            var headers = decodeFromBuffer(readInfo.data).split("\r\n");
+
+
+            console.dir("response header from origin server");
+            console.log(headers);
+
+            // If response header includes redirection.
+            if(headers[0].indexOf("HTTP/1.1 30") === 0) {
+              console.log("Now, receive redirection message "+ headers[0]);
+              for(var i = 0, l = headers.length; i < l; i += 1) {
+                if(headers[i].indexOf("Location: ") === 0) {
+                  console.log("Found Location header" + headers[i])
+                  var location = headers[i].slice("Location: ".length);
+                  chrome.socket.destroy(sid);
+                  proxy_(method, location, res);
+                  return;
+                }
+              }
+
+              console.log("Cannot obtain Location header, so simply close this session.");
+              chrome.socket.destroy(sid);
+              res.close();
+            }
+
+            // Now, assuming 20x headers (that is wrong assumption...)
+            // relay received data to client.
             res.sendraw(readInfo.data);
 
             var read_ = function() {
@@ -220,6 +237,7 @@ var Controller = {"url": ""}
                   res.sendraw(readInfo.data);
                   read_();
                 } else {
+                  res.close();
                   chrome.socket.destroy(sid);
                 }
               });
@@ -230,22 +248,40 @@ var Controller = {"url": ""}
       });
     });
   }
+
+  // Because of !!0 returns false, without dummy data below logic(check parameters of id) makes error.
+  self.videourls = ['prevent 0'];
+
+  self.set = function(url) {
+    if(self.videourls.indexOf(url) === -1) {
+      self.videourls.push(url);
+    }
+    return self.url + "/video.mp4?id="+self.videourls.indexOf(url);
+  };
+
   self.server = new Server();
 
+  self.server.get('/', function(req, res) {
+    res.render(self.videourl);
+  });
+
   self.server.get('/video.mp4', function(req, res){
-    if(!!self.videourl === false) {
+    console.dir(req);
+    var id = (req.params.id && parseInt(req.params.id)) || false;
+    if(!!id === false && !!self.videourls[id] === false) {
       res.render("video url doesn't set");
       return;
     }
-    proxy_('GET', res)
+    proxy_('GET', self.videourls[id], res)
   });
 
   self.server.head('/video.mp4', function(req, res){
-    if(!!self.videourl === false) {
+    var id = (req.params.id && parseInt(req.params.id)) || false;
+    if(!!id === false && !!self.videourls[id] === false) {
       res.render("video url doesn't set");
       return;
     }
-    proxy_('HEAD', res)
+    proxy_('GET', self.videourls[id], res)
   });
 
   self.server.listen(0, function(err){

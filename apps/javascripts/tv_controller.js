@@ -108,6 +108,7 @@ var tvController;
 		    }
 		  })
 		},
+		// [FIXME] getXML_ seems not appreciate name.
 		getXml_: function(args, actionName, serviceType, settings){
 		  var data = this.xmlHeader, settings = settings || {};
 		  data += '<u:' + actionName + ' xmlns:u="urn:schemas-upnp-org:service:'+ serviceType + ':1">'

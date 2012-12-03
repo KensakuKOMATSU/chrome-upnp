@@ -38,6 +38,16 @@ urls = []
 
 app.get('/', routes.index);
 
+app.get('/redirect/:path', function(req, res) {
+  console.log(req.params.path);
+  if(!!req.params.path) {
+    res.redirect("/"+req.params.path);
+  } else {
+    res.end("can't find :path");
+  }
+});
+
+
 app.get('/proxy_url/:source', function(req, res){
   var url = req.params.source;
 

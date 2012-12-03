@@ -8,6 +8,7 @@ var Discovery;
 		return false;
 	}
 
+	// check same Location is already included in the object.
 	function check_overlapped(o, list){
 	  for(i=0; i<list.length; i++){
 	    if (o.location == list[i].location){
@@ -16,6 +17,8 @@ var Discovery;
 	  }
 	  return false;
 	}
+
+	// generate object literal from SSDP message.
 	var parse = function(data, address) {
 	  var arr = data.replace(/\r\n|\r/g, "\n").split("\n"), ret = {};
 
@@ -78,7 +81,7 @@ var Discovery;
 		        	"friendlyName" : friendly_name,
 		        	"iconUrl" : icon_url,
 		        	"serviceType" : self.serviceTypes,
-		        	"controlUrls" : control_urls
+		        	"controlUrls" : control_urls // [TODO] only including searviceTypes indicated in self.serviceTypes.
 		        }
 		        callback(ret);
 			})
@@ -90,6 +93,7 @@ var Discovery;
 			var sent = false;
 			st = !!st === false ? this.serviceTypes[0] : st;
 
+			// [FIXME] written below make no sense.
 			setTimeout(function(){
 				if(!!sent === false) {
 					sent = true;
@@ -98,7 +102,7 @@ var Discovery;
 			}, 10000)
 
 
-
+			// after UDP socket has created below callback will be invoked.
 			upnp.onready = function(){
 				this.listen(function(recv){
 					if(!!sent === false) {

@@ -255,6 +255,13 @@
     this.send(body);
   };
 
+  Response.prototype.sendrawheader = function(header){
+    chrome.socket.write(this.req.sid, encodeToBuffer(header + CRLF + CRLF), function(writeInfo){});
+  }
+  Response.prototype.sendrawtext = function(body){
+    chrome.socket.write(this.req.sid, encodeToBuffer(body), function(writeInfo){});
+  }
+
   Response.prototype.sendraw = function(body){
     chrome.socket.write(this.req.sid, body, function(writeInfo) {});
   }

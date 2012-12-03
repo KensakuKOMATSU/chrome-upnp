@@ -53,9 +53,9 @@ $("#discovery").click(function(){
 $("a.device").live("click", function(){
   var avcontrol_url = $(this).data("avcontrolurl").replace(" ", "")
     , rendering_url = $(this).data("renderingurl").replace(" ", "")
-    , url = $(".youtubeurl").val()
+    , video_url = $(".youtubeurl").val()
 
-  if(!!url === false) {
+  if(!!video_url === false) {
     alert("URL doesn't set");
     return;
   }
@@ -64,25 +64,25 @@ $("a.device").live("click", function(){
   $("#devices p").html("<span class='label label-success'>Selected device</span><ul class='unstyled'><li><pre>"+html+"</pre></li></ul>");
   $("#buttons button,input").attr("disabled", false);
 
-  $.get(proxyurl+"/set", {"url": url}, function(e) {
-    console.log("set finished"+e);
-    $.get(proxyurl+"/start", {"avcontrol_url": avcontrol_url, "rendering_url": rendering_url}, function(e){
-      console.log("start finished"+e);
-    });
+  $.get(proxyurl+"/set", {"video_url": video_url, "avcontrol_url": avcontrol_url, "rendering_url": rendering_url}, function(e){
+    console.log("set finished");
+    $.get(proxyurl+"/getVolume", function(e){
+      $("#buttons input[type=range]").val(e);
+      $("#volume").text(e);
+    }) 
   });
-  $.get(proxyurl+"/getVolume", function(e){
-    $("#buttons input[type=range]").val(e);
-    $("#volume").text(e);
-  });
+  ;
 });
 
+// Play, Pause, Stop
 $("section#buttons button").click(function(e){
-  var op = $(this).data('op');
+  var op = $(this).data('op'); // op means operation to TV, such as "Play", "Pause", "Stop"
   $.get(proxyurl+"/"+op, function(e){
     console.log(e);
   });
 });
 
+// set volume
 $("section#buttons input[type=range]").bind("change", function(e){
   var level = $(this).val();
   $("#volume").text(level);

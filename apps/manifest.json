@@ -13,7 +13,7 @@
         "javascripts/upnp_devices.js",
         "javascripts/tv_controller.js",
         "chromexpress/buffer.js",
-        "chromexpress/server.js", 
+        "chromexpress/server.js",
         "chromexpress/app.js",
         "main.js"
       ]
