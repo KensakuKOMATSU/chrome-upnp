@@ -1,3 +1,4 @@
+/*
 var UPnPDevices = [];
 
 (function(){
@@ -14,3 +15,4 @@ var UPnPDevices = [];
 		});
 	}, INTERVAL * 1000)
 }())
+*/

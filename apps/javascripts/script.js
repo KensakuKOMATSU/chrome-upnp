@@ -1,5 +1,10 @@
-
 console.log("start")
+
+// Belows functions are executed when call as packaged apps.
+// I guess those weren't checked for a long time, so I strongly believe
+// that they don't work properly.
+//
+// As a background process, they aren't used.
 
 
 var showVideoMeta = function(){

@@ -51,7 +51,7 @@ var tvstat = new TVStat();
  * internal webservers
  */
 
-var Controller = {"url": "", "server": null};
+var Controller = {"url": null, "server": null};
 
 (function(){
   var self = Controller;
@@ -73,8 +73,11 @@ var Controller = {"url": "", "server": null};
   })
 
   self.server.get('/upnpdevices', function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(UPnPDevices))
+    var discovery = new Discovery();
+    discovery.start(function(devices){
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify(devices))
+    })
   })
 
 
@@ -83,20 +86,20 @@ var Controller = {"url": "", "server": null};
     var avcontrol_url  = req.params.avcontrol_url;
     var rendering_url  = req.params.rendering_url;
 
-    var proxy_url = Proxy.set(video_url)
-    tvController.start(proxy_url, avcontrol_url, rendering_url)
-    // tvController.start("http://192.168.2.3:3000/video.mp4", avcontrol_url, rendering_url)
+    var proxy_url = Proxy.set(video_url, function(proxy_url) {
+      tvController.start(proxy_url, avcontrol_url, rendering_url)
 
-    tvstat.set(video_url, "video/mp4");
+      tvstat.set(video_url, "video/mp4");
 
-    var ret = {
-      "avcontrol_url": avcontrol_url,
-      "rendering_url": rendering_url,
-      "proxy_url": proxy_url
-    }
+      var ret = {
+        "avcontrol_url": avcontrol_url,
+        "rendering_url": rendering_url,
+        "proxy_url": proxy_url
+      }
 
-    res.setHeader("content-type", "application/json")
-    res.send(JSON.stringify(ret));
+      res.setHeader("content-type", "application/json")
+      res.send(JSON.stringify(ret));
+    });
   })
 
   self.server.get('/play', function(req, res){
@@ -137,22 +140,24 @@ var Controller = {"url": "", "server": null};
   })
 
   self.server.listen(0, function(err){
+  });
+
+  self.geturl = function(callback){
     chrome.socket.getNetworkList(function(list){
       var address = "";
-      console.log("=== detected network interfaces ===")
-      console.dir(list);
-
-      self.url = "http://localhost:"+self.server.port;
+      var url = "http://localhost:"+self.server.port;
       list.forEach(function(if_){
         if(if_.address.match(/^\d+\.\d+\.\d+\.\d+$/)) address = if_.address;
       })
-      if(!!address) self.url = self.url.replace('localhost', address);
-      console.log('listening control url : '+self.url);
+      if(!!address) url = url.replace('localhost', address);
+      if(typeof(callback) === "function") {
+        callback(url);
+      }
     });
-  });
+  }
 }());
 
-var Proxy = {"url": "", "videourl": "", "videohost": "", "videopath": "", "server": null};
+var Proxy = {"url": null, "videourl": "", "videohost": "", "videopath": "", "server": null};
 
 /**
  * Proxy implementations
@@ -252,11 +257,16 @@ var Proxy = {"url": "", "videourl": "", "videohost": "", "videopath": "", "serve
   // Because of !!0 returns false, without dummy data below logic(check parameters of id) makes error.
   self.videourls = ['prevent 0'];
 
-  self.set = function(url) {
+  self.set = function(url, callback) {
     if(self.videourls.indexOf(url) === -1) {
       self.videourls.push(url);
     }
-    return self.url + "/video.mp4?id="+self.videourls.indexOf(url);
+
+    self.geturl(function(proxyurl){
+      if(typeof(callback) === "function") {
+        callback(proxyurl + "/video.mp4?id="+self.videourls.indexOf(url));
+      }
+    })
   };
 
   self.server = new Server();
@@ -285,19 +295,21 @@ var Proxy = {"url": "", "videourl": "", "videohost": "", "videopath": "", "serve
   });
 
   self.server.listen(0, function(err){
+  });
+
+  self.geturl = function(callback){
     chrome.socket.getNetworkList(function(list){
       var address = "";
-      console.log("=== detected network interfaces ===")
-      console.dir(list);
-
-      self.url = "http://localhost:"+self.server.port;
+      var url = "http://localhost:"+self.server.port;
       list.forEach(function(if_){
         if(if_.address.match(/^\d+\.\d+\.\d+\.\d+$/)) address = if_.address;
       })
-      if(!!address) self.url = self.url.replace('localhost', address);
-      console.log('listening proxy url : '+self.url);
+      if(!!address) url = url.replace('localhost', address);
+      if(typeof(callback) === "function") {
+        callback(url);
+      }
     });
-  });
+  }
 }())
 
 
